@@ -8,7 +8,7 @@ void Ultrason::init() {
 int Ultrason::getDistanceInCm() { return sonar->ping_cm(); }
 
 void Ultrason::setOption(UltrasonOption& opt) {
-    initialDistance = opt.getDistance();
+    initialDistance = opt.getInitialDistance();
 }
 
 bool Ultrason::isCatHere() {

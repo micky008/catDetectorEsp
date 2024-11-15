@@ -2,16 +2,16 @@
 #define ___MYSD_H__
 
 #include "interfaces/Initialisation.h"
-#include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <SD.h>
+#include <LittleFS.h>
 
-class MySD {
+class MySD : public Initialisation {
 public:
     MySD(AsyncWebServer& server);
     void init();
-
+    void switchOn();
 private:
+    void recurs(File dir);
     AsyncWebServer& server;
 };
 

@@ -8,16 +8,15 @@
 #include "interfaces/UltrasonOpts.h"
 
 class Ultrason : public Initialisation, public IOption<UltrasonOption> {
-   private:
+private:
     NewPingESP8266* sonar;
     const int TRIGGER_PIN = 12;
     const int ECHO_PIN = 11;
     const int MAX_DISTANCE = 200;  // sensor distance MAX in cm
-    const unsigned long TRIGGER =
-        15;  // in cm distance between the end of littiere and cat
+    const unsigned long TRIGGER = 15;  // in cm distance between the litter's end and cat
     unsigned long initialDistance = 0;
 
-   public:
+public:
     void init();
     void setOption(UltrasonOption& opt);
     int getDistanceInCm();

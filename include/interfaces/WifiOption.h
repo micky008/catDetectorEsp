@@ -5,6 +5,7 @@ class WifiOption {
    public:
     virtual const char* getSSID() = 0;
     virtual const char* getWifiPwd() = 0;
+    virtual String getServerURL() = 0; 
 };
 
 #endif

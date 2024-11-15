@@ -3,7 +3,7 @@
 
 class UltrasonOption {
    public:
-    virtual int getDistance() = 0;
+    virtual int getInitialDistance() = 0;
 };
 
 #endif
