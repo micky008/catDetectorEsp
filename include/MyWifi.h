@@ -13,27 +13,17 @@ public:
     String ssidName;
 };
 
-class MyWIFI : public Initialisation, public IOption<WifiOption> {
+class MyWIFI : public IOption<WifiOption> {
 public:
     void setOption(WifiOption& opt);
-    List* getResults();
     void turnWifiMode();
-    String listToJson(List* list);
-    /*Init scan*/
-    void init();
-    bool isScanInProgress();
-    bool isScanEnded();
-    void reset();
+
 
 private:
-    List* list = nullptr;
     bool isSTAMode = false;
     WifiOption* opts;
     String apModeSSID = "CatDetector";
     String apModeWifi = "0123456789";
-    void deleteList(List* l);
-    int wifiResult = WIFI_SCAN_RUNNING;
-    String resForJson;
 };
 
 #endif

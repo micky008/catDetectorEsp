@@ -1,7 +1,7 @@
 
 #include <Arduino.h>
-#include <ESP8266mDNS.h>
-#include <ESP8266WiFi.h>
+// #include <ESP8266mDNS.h>
+// #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
@@ -26,33 +26,40 @@ void setup() {
     config.init();
     mysd.init();
     //ultrason.init();
-    // if (config.getSSID() != NULL) {
-    //     wifi.setOption(config);
-    //     wifi.turnWifiMode();
-    //     return;
-    // }
+    if (config.getSSID() != NULL) {
+        wifi.setOption(config);
+        wifi.turnWifiMode();
+        return;
+    }
     wifi.turnWifiMode();
     server.on("/scan", HTTP_GET, [](AsyncWebServerRequest* request) {
-        Serial.println("in scan");
-        wifi.init();
-        AsyncWebServerResponse* response = request->beginResponse(200, "application/json", "\"value\": \"scan in progress\"");
-        addCORS(response);
-        request->send(response);
-    });
-    server.on("/wifis", HTTP_GET, [](AsyncWebServerRequest* request) {
-        Serial.println("in wifis");
-        if (!wifi.isScanEnded()) {
-            AsyncWebServerResponse* resp = request->beginResponse(204);
-            addCORS(resp);
-            request->send(resp);
-            return;
+        String json = "[";
+        int n = WiFi.scanComplete();
+        if (n == -2) {
+            WiFi.scanNetworks(true);
         }
-        String res = String("value: \"scan fini\"");
-        AsyncWebServerResponse* response = request->beginResponse(200, "application/json", res);
+        else if (n) {
+            for (int i = 0; i < n; ++i) {
+                if (i) {
+                    json += ",";
+                }
+                json += "{";
+                json += "\"ssid\":\"" + WiFi.SSID(i) + "\"";
+                json += "}";
+            }
+            WiFi.scanDelete();
+            if (WiFi.scanComplete() == -2) {
+                WiFi.scanNetworks(true);
+            }
+        }
+        json += "]";
+        AsyncWebServerResponse* response = request->beginResponse(200, "application/json", json);
         addCORS(response);
         request->send(response);
+        json = String();
     });
-    server.on("/ping", HTTP_GET, [](AsyncWebServerRequest* request) {
+
+    server.on("/raz", HTTP_GET, [](AsyncWebServerRequest* request) {
         String res = "{\"ping\": $dist$ }";
         //res.replace("$dist$", String(ultrason.getDistanceInCm()));
         res.replace("$dist$", String(60));
@@ -86,14 +93,6 @@ void addCORS(AsyncWebServerResponse* response) {
 
 void loop() {
     // MDNS.update();
-    delay(1000);
-    if (wifi.isScanInProgress()) {
-        return;
-    }
-    if (wifi.isScanEnded()) {
-        List* list = wifi.getResults();
-        Serial.println(wifi.listToJson(list));
-    }
 }
 
 
